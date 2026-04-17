@@ -11,6 +11,4 @@ matplotlib
 jupyter
 ipykernel
 opencv-python
-paddlepaddle
-paddleocr
 supervision

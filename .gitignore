@@ -2,3 +2,5 @@
 *.png
 weights/
 venv/
+
+*__pycache__*
