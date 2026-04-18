@@ -6,12 +6,12 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=flat-square&logo=jupyter&logoColor=white)](https://jupyter.org/)
-[![Tkinter](https://img.shields.io/badge/UI-Tkinter-4B8BBE?style=flat-square)](#components)
+[![AppKit](https://img.shields.io/badge/UI-AppKit-4B8BBE?style=flat-square)](#components)
 [![Models](https://img.shields.io/badge/Models-YOLO%20%2B%20Florence--2-6f42c1?style=flat-square)](#components)
 
 </div>
 
-This repository combines three focused components in one workspace: a streaming client built with LiteLLM, a custom Tkinter window prototype, and a notebook pipeline for UI element detection and captioning using YOLO and Florence-2. It is intended for fast local iteration on interaction patterns, latency measurement, and image-based interface analysis.
+This repository combines three focused components in one workspace: a streaming client built with LiteLLM, a native macOS glass overlay built with AppKit, and a notebook pipeline for UI element detection and captioning using YOLO and Florence-2. It is intended for fast local iteration on interaction patterns, latency measurement, and image-based interface analysis.
 
 > [!NOTE]
 > The notebook uses local model weights from `weights/` and is currently detection-and-caption only.
@@ -29,7 +29,7 @@ This repository combines three focused components in one workspace: a streaming 
 | Component | Purpose | Entry Point |
 | --- | --- | --- |
 | Streaming client | Streams chat completions and reports time to first token | `main.py` |
-| Tkinter prototype | Runs a compact frameless desktop UI experiment | `src/tkinter/ui.py` |
+| Swift glass overlay | Runs a native macOS floating blur overlay | `src/overlay/GlassOverlay.swift` |
 | OmniParser notebook | Detects and captions UI regions in screenshots | `src/omniparser.ipynb` |
 
 ## Repository Structure
@@ -40,8 +40,8 @@ This repository combines three focused components in one workspace: a streaming 
 ├── requirements.txt
 ├── src/
 │   ├── omniparser.ipynb
-│   └── tkinter/
-│       └── ui.py
+│   ├── overlay/
+│   │   └── GlassOverlay.swift
 └── weights/
     ├── icon_detect/
     └── icon_caption_florence/
@@ -92,15 +92,21 @@ Run:
 python main.py
 ```
 
-### Tkinter Window Demo
+### Native macOS Glass Overlay
 
-`src/tkinter/ui.py` is a small custom window prototype intended for quick UI experiments.
+`src/overlay/GlassOverlay.swift` is a standalone AppKit overlay that behaves like a native floating glass panel. It uses a borderless `NSPanel`, `NSVisualEffectView`, and adaptive screen-aware placement.
 
 Run:
 
 ```bash
-python src/tkinter/ui.py
+swift src/overlay/GlassOverlay.swift
 ```
+
+Notes:
+
+- drag anywhere in the panel to move it
+- press `Esc` to close it
+- tweak size, text, and placement directly in `src/overlay/GlassOverlay.swift`
 
 ### OmniParser Notebook
 
