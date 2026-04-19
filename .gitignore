@@ -4,3 +4,6 @@ weights/
 venv/
 
 *__pycache__*
+
+*.db
+.build/

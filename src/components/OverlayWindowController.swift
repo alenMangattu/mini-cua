@@ -8,7 +8,7 @@ final class OverlayWindowController {
         didSet { contentView.onSubmit = onSubmit }
     }
 
-    private var screenObserver: NSObjectProtocol?
+    private var screenObserver: OverlayScreenObserver?
     private var isShowingResponse = false
 
     init(
@@ -22,18 +22,8 @@ final class OverlayWindowController {
             self?.onSubmit?(text)
         }
 
-        screenObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.didChangeScreenParametersNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
+        screenObserver = OverlayScreenObserver { [weak self] in
             self?.reposition()
-        }
-    }
-
-    deinit {
-        if let screenObserver {
-            NotificationCenter.default.removeObserver(screenObserver)
         }
     }
 
@@ -84,7 +74,7 @@ final class OverlayWindowController {
     }
 
     func reposition() {
-        guard let screen = targetScreen() else { return }
+        guard let screen = overlayTargetScreen() else { return }
         let visible = screen.visibleFrame
         let width = clamp(visible.width * 0.30, min: 380, max: 620)
         let heightMultiplier: CGFloat = isShowingResponse ? 0.18 : 0.095
@@ -102,12 +92,5 @@ final class OverlayWindowController {
             ),
             display: true
         )
-    }
-
-    private func targetScreen() -> NSScreen? {
-        let mouse = NSEvent.mouseLocation
-        return NSScreen.screens.first(where: { NSMouseInRect(mouse, $0.frame, false) })
-            ?? NSScreen.main
-            ?? NSScreen.screens.first
     }
 }
