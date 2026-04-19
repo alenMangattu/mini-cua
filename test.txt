@@ -1,0 +1,5 @@
+curl -s -X POST http://127.0.0.1:8000/agent/run \
+  -F "prompt=Now click the search bar and type 'fastapi'" \
+  -F "screenshot=@debug_screenshots/0126b139b57d41a1871d2ca57465270d.png" \
+  -F "conversation_id=c8f98b6e-5954-4089-b7c0-1e4dce361db6" \
+  | python3 -m json.tool
