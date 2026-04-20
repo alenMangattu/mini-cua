@@ -15,3 +15,6 @@ jupyter
 ipykernel
 opencv-python
 supervision
+huggingface-hub
+easyocr
+jinja2

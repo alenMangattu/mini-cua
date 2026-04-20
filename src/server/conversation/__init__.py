@@ -1,5 +1,6 @@
-"""Conversation package.
+"""Conversation package exports."""
 
-Public surface used by app.py:
-    from server.conversation.service import load_or_create, run_turn
-"""
+from server.conversation.agent_start import create_and_run
+from server.conversation.conversation import continue_run
+
+__all__ = ["continue_run", "create_and_run"]

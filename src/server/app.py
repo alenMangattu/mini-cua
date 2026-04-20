@@ -32,7 +32,8 @@ import uvicorn
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
-from server.conversation.service import continue_run, create_and_run
+from server.conversation.agent_start import create_and_run
+from server.conversation.conversation import continue_run
 from server.database import init_db, save_image
 from server.llm_client import get_config
 
