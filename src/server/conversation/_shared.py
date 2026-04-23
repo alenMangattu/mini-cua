@@ -82,6 +82,7 @@ def _normalize_omniparser_image(image_value: str | None) -> str | None:
     return f"data:image/png;base64,{image_value}"
 
 
+
 def build_initial_content(prompt: str, image_id: str, image_data_uri: str) -> list[dict]:
     coord_ui = ""
     omniparser_image = None
