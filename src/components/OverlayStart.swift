@@ -2,7 +2,8 @@ import AppKit
 
 private let kAgentURL = URL(string: "http://127.0.0.1:8000/agent/run")!
 
-enum OverlayAgentBridge {
+/// Starts a run on the local agent service from the overlay UI.
+enum OverlayStart {
     static func submit(prompt: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
@@ -17,7 +18,7 @@ enum OverlayAgentBridge {
 
             guard let screenshotData else {
                 completion(.failure(NSError(
-                    domain: "OverlayAgentBridge",
+                    domain: "OverlayStart",
                     code: 1,
                     userInfo: [NSLocalizedDescriptionKey: "Failed to capture screenshot."]
                 )))
@@ -82,14 +83,23 @@ enum OverlayAgentBridge {
                 let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
                 if statusCode == 200 || statusCode == 202 {
                     completion(.success(()))
+                    closeOverlayAndExit()
                 } else {
                     completion(.failure(NSError(
-                        domain: "OverlayAgentBridge",
+                        domain: "OverlayStart",
                         code: statusCode,
                         userInfo: [NSLocalizedDescriptionKey: "Agent server returned HTTP \(statusCode)."]
                     )))
                 }
             }
         }.resume()
+    }
+
+    private static func closeOverlayAndExit() {
+        NSApp.windows.forEach { window in
+            window.orderOut(nil)
+            window.close()
+        }
+        NSApp.terminate(nil)
     }
 }

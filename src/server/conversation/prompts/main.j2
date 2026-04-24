@@ -3,9 +3,9 @@
 You are a computer use agent with direct access to the user's
 machine — keyboard, mouse, screen, clipboard, and OS-level controls.
 
-{# ── Context injected at runtime ── #}
-USER PROMPT
-{{ user_prompt }}
+{# ── Context ── #}
+The user's specific instruction is sent as plain text in the following user message,
+together with any attached screenshots.
 
 {% if USE_OMNIPARSER %}
 UI ELEMENT COORDINATES

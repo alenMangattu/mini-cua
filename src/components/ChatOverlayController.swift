@@ -44,6 +44,7 @@ final class ChatOverlayController {
 
     func setTitle(_ text: String) { contentView.setTitle(text) }
     func setStatus(_ text: String) { contentView.setStatus(text) }
+    func setBusy(_ busy: Bool) { contentView.setBusy(busy) }
 
     private func reposition() {
         guard let screen = overlayTargetScreen() else { return }
