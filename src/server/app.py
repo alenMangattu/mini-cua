@@ -11,7 +11,9 @@ POST /agent/run
         prompt      (str)  - The task or question.
         screenshot  (file) - Current page screenshot (PNG / JPEG).
     Response:
-        { "status": "ok", "conversation_id": "<uuid>", "steps": [...] }
+        { "status": "ok", "conversation_id": "<uuid>", "steps": [...],
+          "llm_type": "<CONVERSATIONAL|SIMPLE_TASK|COMPLEX_TASK|null>",
+          "assistant_message": "<reply text or null>" }
 
 POST /conversation/{id}
     Continue an existing conversation.
@@ -20,7 +22,8 @@ POST /conversation/{id}
         prompt      (str)  - The next instruction.
         screenshot  (file) - Current page screenshot (PNG / JPEG).
     Response:
-        { "status": "ok", "conversation_id": "<uuid>", "steps": [...] }
+        { "status": "ok", "conversation_id": "<uuid>", "steps": [...],
+          "llm_type": "...", "assistant_message": "..." }
 """
 
 import base64
@@ -91,6 +94,19 @@ async def _prepare_image(screenshot: UploadFile) -> tuple[bytes, str, str]:
     return raw, content_type, _encode_image(raw, content_type)
 
 
+def _json_for_turn(doc: dict, turn) -> dict:
+    assistant = turn.assistant_message
+    if not assistant and turn.steps:
+        assistant = turn.steps[0]
+    return {
+        "status": "ok",
+        "conversation_id": doc["id"],
+        "steps": turn.steps,
+        "llm_type": turn.llm_type,
+        "assistant_message": assistant,
+    }
+
+
 @app.post("/agent/run")
 async def agent_run(
     prompt: str = Form(..., description="Task or question for the agent"),
@@ -106,9 +122,9 @@ async def agent_run(
 
     image_id = save_image(image_data_uri)
     print(f"\n[Agent/new] prompt={prompt!r}  image_id={image_id}", flush=True)
-    doc, steps = create_and_run(prompt, image_id, image_data_uri)
+    doc, turn = create_and_run(prompt, image_id, image_data_uri)
 
-    return JSONResponse({"status": "ok", "conversation_id": doc["id"], "steps": steps})
+    return JSONResponse(_json_for_turn(doc, turn))
 
 
 @app.post("/conversation/{conversation_id}")
@@ -127,9 +143,9 @@ async def conversation_turn(
 
     image_id = save_image(image_data_uri)
     print(f"\n[Agent/continue] conv={conversation_id!r}  prompt={prompt!r}  image_id={image_id}", flush=True)
-    doc, steps = continue_run(conversation_id, prompt, image_id, image_data_uri)
+    doc, turn = continue_run(conversation_id, prompt, image_id, image_data_uri)
 
-    return JSONResponse({"status": "ok", "conversation_id": doc["id"], "steps": steps})
+    return JSONResponse(_json_for_turn(doc, turn))
 
 
 if __name__ == "__main__":

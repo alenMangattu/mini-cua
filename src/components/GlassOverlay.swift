@@ -233,10 +233,10 @@ final class GlassRootView: NSVisualEffectView {
             guard let self else { return }
 
             let screenshotData = self.captureScreen()
-            self.window?.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
 
             guard let screenshotData else {
+                self.window?.makeKeyAndOrderFront(nil)
+                NSApp.activate(ignoringOtherApps: true)
                 self.setStatus("Screenshot failed — press Esc to close", alpha: 0.80)
                 self.setBusy(false)
                 return
@@ -277,13 +277,16 @@ final class GlassRootView: NSVisualEffectView {
                 guard let self else { return }
                 self.setBusy(false)
                 if let error {
+                    self.window?.makeKeyAndOrderFront(nil)
+                    NSApp.activate(ignoringOtherApps: true)
                     self.setStatus("Error: \(error.localizedDescription)", alpha: 0.80)
                 } else {
                     let code = (response as? HTTPURLResponse)?.statusCode ?? 0
                     if code == 200 {
-                        self.inputField.stringValue = ""
-                        self.setStatus("Done — check console for steps  ·  Esc to close")
+                        NSApp.terminate(nil)
                     } else {
+                        self.window?.makeKeyAndOrderFront(nil)
+                        NSApp.activate(ignoringOtherApps: true)
                         self.setStatus("Agent returned HTTP \(code) — Esc to close", alpha: 0.80)
                     }
                 }
